@@ -1,0 +1,24 @@
+{
+  "compatibleVersion": 3,
+  "bundleVersion": 1,
+  "icon": "icon.png",
+  "commands": [
+    {
+      "name": "my-command",
+      "identifier": "my-command-identifier",
+      "script": "my-command.js"
+    }
+  ],
+  "menu": {
+    "title": "ui-kit",
+    "items": [
+      "my-command-identifier"
+    ]
+  },
+  "version": "0.1.0",
+  "name": "ui-kit",
+  "disableCocoaScriptPreprocessor": true,
+  "appcast": "https://raw.githubusercontent.com//master/.appcast.xml",
+  "author": "kirill",
+  "authorEmail": "kirill.savelov@acronis.com"
+}
