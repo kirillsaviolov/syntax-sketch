@@ -1,22 +1,23 @@
 {
   "compatibleVersion": 3,
   "bundleVersion": 1,
-  "icon": "icon.png",
   "commands": [
     {
-      "name": "my-command",
-      "identifier": "my-command-identifier",
-      "script": "my-command.js"
+      "name": "Syntax",
+      "identifier": "syntax-identifier",
+      "script": "index.js",
+      "shortcut": "command shift c"
     }
   ],
   "menu": {
-    "title": "ui-kit",
+    "isRoot": true,
+    "title": "Syntax",
     "items": [
-      "my-command-identifier"
+      "syntax-identifier"
     ]
   },
   "version": "0.1.0",
-  "name": "ui-kit",
+  "name": "syntax",
   "disableCocoaScriptPreprocessor": true,
   "appcast": "https://raw.githubusercontent.com//master/.appcast.xml",
   "author": "kirill",

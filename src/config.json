@@ -1,0 +1,9 @@
+{
+  "url": "http://uikit.corp.acronis.com/jenkins/uikit/element-ui/develop/latest",
+  "names": {
+    "button": {},
+    "button-group": {
+      "aliases": ["group-button"]
+    }
+  }
+}

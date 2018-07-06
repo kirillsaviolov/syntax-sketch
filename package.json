@@ -1,13 +1,13 @@
 {
-  "name": "ui-kit",
+  "name": "syntax",
   "version": "0.1.0",
   "engines": {
     "sketch": ">=3.0"
   },
   "skpm": {
-    "name": "ui-kit",
+    "name": "syntax",
     "manifest": "src/manifest.json",
-    "main": "ui-kit.sketchplugin",
+    "main": "syntax.sketchplugin",
     "assets": [
       "assets/**/*"
     ]
@@ -21,5 +21,8 @@
   "devDependencies": {
     "@skpm/builder": "^0.5.2"
   },
-  "author": "kirill <kirill.savelov@acronis.com>"
+  "author": "kirill <kirill.savelov@acronis.com>",
+  "dependencies": {
+    "sketch-module-web-view": "^1.1.8"
+  }
 }
