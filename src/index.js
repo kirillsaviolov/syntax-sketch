@@ -12,19 +12,32 @@ function openWindow(name, onClose) {
   window.loadURL(`${config.url}/#/en-US/${name}`);
   window.once('ready-to-show', () => {
     window.show();
-    window.webContents.executeJavaScript('activateSearch()');
   });
   window.on('closed', onClose);
+  window.moveTop();
 
   return window;
 }
 
 function parse(selection) {
-  if (selection.count() && selection[0] instanceof MSSymbolInstance) {
+  if (selection.count() === 0) {
+    return;
+  }
+
+  const type = selection[0].class().toString().trim();
+  const name = selection[0].name();
+
+  if (isValidType(type)) {
     for (let key in config.names) {
       const set = [key, ...(config.names[key].aliases || [])];
-      const regexp = `${set.join('|')}\/`
-      const matches = selection[0].name().match(regexp);
+      const regexps = [
+        new RegExp('^' + set.join('|') + '$', 'i'),
+        new RegExp('__(' + set.join('|') + ')\/', 'i')
+      ];
+      const matches = regexps.reduce((result, regexp) => {
+        result = result || name.match(regexp);
+        return result;
+      }, null);
 
       if (matches) {
         return key;
@@ -33,16 +46,37 @@ function parse(selection) {
   }
 }
 
+function isValidType(type) {
+  switch(type) {
+    case 'MSLayerGroup':
+    case 'MSShapeGroup':
+    case 'MSSymbolInstance':
+    case 'MSTextLayer':
+      return true;
+  }
+  return false;
+}
+
 export default function(context) {
   const threadDictionary = NSThread.mainThread().threadDictionary();
   const id = 'syntax';
+  const name = parse(context.selection);
 
-  if (threadDictionary[id]) {
+  if (threadDictionary[id] && threadDictionary[id].window) {
+    const {currentName, window} = threadDictionary[id];
+
+    if (currentName !== name) {
+      window.loadURL(`${config.url}/#/en-US/${name}`);
+      window.moveTop();
+    }
     return;
   }
 
-  const window = openWindow(parse(context.selection), () => {
+  const window = openWindow(name, () => {
     threadDictionary[id] = null;
   });
-  threadDictionary[id] = window;
+  threadDictionary[id] = {
+    currentName: name,
+    window
+  };
 }

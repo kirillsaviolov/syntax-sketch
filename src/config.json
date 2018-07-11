@@ -4,6 +4,9 @@
     "button": {},
     "button-group": {
       "aliases": ["group-button"]
-    }
+    },
+    "select": {},
+    "split-button": {},
+    "switch": {}
   }
 }

@@ -1818,7 +1818,7 @@ module.exports = function buildAPI(browserWindow, panel, webview) {
 /*! exports provided: url, names, default */
 /***/ (function(module) {
 
-module.exports = {"url":"http://uikit.corp.acronis.com/jenkins/uikit/element-ui/develop/latest","names":{"button":{},"button-group":{"aliases":["group-button"]}}};
+module.exports = {"url":"http://uikit.corp.acronis.com/jenkins/uikit/element-ui/develop/latest","names":{"button":{},"button-group":{"aliases":["group-button"]},"select":{},"split-button":{},"switch":{}}};
 
 /***/ }),
 
@@ -1857,18 +1857,29 @@ function openWindow(name, onClose) {
   window.loadURL("".concat(_config_json__WEBPACK_IMPORTED_MODULE_1__.url, "/#/en-US/").concat(name));
   window.once('ready-to-show', function () {
     window.show();
-    window.webContents.executeJavaScript('activateSearch()');
   });
   window.on('closed', onClose);
+  window.moveTop();
   return window;
 }
 
 function parse(selection) {
-  if (selection.count() && selection[0] instanceof MSSymbolInstance) {
+  if (selection.count() === 0) {
+    return;
+  }
+
+  var type = selection[0].class().toString().trim();
+  var name = selection[0].name();
+
+  if (isValidType(type)) {
     for (var key in _config_json__WEBPACK_IMPORTED_MODULE_1__.names) {
       var set = [key].concat(_toConsumableArray(_config_json__WEBPACK_IMPORTED_MODULE_1__.names[key].aliases || []));
-      var regexp = "".concat(set.join('|'), "/");
-      var matches = selection[0].name().match(regexp);
+      var regexps = [new RegExp('^' + set.join('|') + '$', 'i'), new RegExp('__(' + set.join('|') + ')\/', 'i')];
+      var matches = regexps.reduce(function (result, regexp) {
+        result = result || name.match(regexp);
+        return result;
+      }, null);
+      console.log('+++matches: ', matches);
 
       if (matches) {
         return key;
@@ -1877,18 +1888,45 @@ function parse(selection) {
   }
 }
 
+function isValidType(type) {
+  switch (type) {
+    case 'MSLayerGroup':
+    case 'MSShapeGroup':
+    case 'MSSymbolInstance':
+    case 'MSTextLayer':
+      console.log('+++', type);
+      return true;
+  }
+
+  return false;
+}
+
 /* harmony default export */ __webpack_exports__["default"] = (function (context) {
   var threadDictionary = NSThread.mainThread().threadDictionary();
   var id = 'syntax';
+  var name = parse(context.selection);
 
-  if (threadDictionary[id]) {
+  if (threadDictionary[id] && threadDictionary[id].window) {
+    var _threadDictionary$id = threadDictionary[id],
+        currentName = _threadDictionary$id.currentName,
+        _window = _threadDictionary$id.window;
+
+    if (currentName !== name) {
+      _window.loadURL("".concat(_config_json__WEBPACK_IMPORTED_MODULE_1__.url, "/#/en-US/").concat(name));
+
+      _window.moveTop();
+    }
+
     return;
   }
 
-  var window = openWindow(parse(context.selection), function () {
+  var window = openWindow(name, function () {
     threadDictionary[id] = null;
   });
-  threadDictionary[id] = window;
+  threadDictionary[id] = {
+    currentName: name,
+    window: window
+  };
 });
 
 /***/ })
